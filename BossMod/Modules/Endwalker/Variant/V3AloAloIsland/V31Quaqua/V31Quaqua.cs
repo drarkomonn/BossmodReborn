@@ -11,7 +11,7 @@ public enum OID : uint
 
 public enum AID : uint
 {
-    _Weaponskill_MadeMagic = 35732, // 40BA->self, 5.0s cast, range 50 circle
+    MadeMagic = 35732, // 40BA->self, 5.0s cast, range 50 circle
     _Weaponskill_ArcaneArmaments = 35720, // 40BA->self, 8.0s cast, single-target
     _Weaponskill_ = 35721, // 233C->self, no cast, single-target
     _Weaponskill_RavagingAxe = 35722, // 40BB->self, 2.0s cast, range 14 circle
@@ -30,7 +30,8 @@ sealed class QuaquaStates : StateMachineBuilder
 {
     public QuaquaStates(BossModule module) : base(module)
     {
-        TrivialPhase();
+        TrivialPhase()
+            .ActivateOnEnter<MadeMagic>();
     }
 }
 
@@ -54,3 +55,5 @@ sealed class QuaquaStates : StateMachineBuilder
 [SkipLocalsInit]
 public sealed class Quaqua(WorldState ws, Actor primary) : BossModule(ws, primary, new(-538f, 94f), new ArenaBoundsCircle(20f));
 
+sealed class MadeMagic(BossModule module)
+    : Components.PersistentInvertibleVoidzoneByCast(module, 50f, () => module.Enemies((uint)OID.Quaqua), (uint)AID.MadeMagic);
