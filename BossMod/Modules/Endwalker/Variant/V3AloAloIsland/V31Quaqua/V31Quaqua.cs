@@ -88,7 +88,7 @@ sealed class ArcaneArmaments(BossModule module) : Components.GenericAOEs(module)
             {
                 _aoes.Add(new(new AOEShapeCircle(14f), caster.Position, activation: WorldState.CurrentTime.AddSeconds(7.7d)));
             }
-            if (actor.CastInfo.Action.ID == (uint)AID.RingingQuoits)
+            if (caster.CastInfo.Action.ID == (uint)AID.RingingQuoits)
             {
                 _aoes.Add(new(new AOEShapeDonut(5f, 18f), caster.Position, activation: WorldState.CurrentTime.AddSeconds(7.7d)));
             }
@@ -103,7 +103,7 @@ sealed class ArcaneArmaments(BossModule module) : Components.GenericAOEs(module)
             var id = caster.InstanceID;
             for (var i = 0; i < count; ++i)
             {
-                if (_aoes[i].caster.InstanceID == id)
+                if (_aoes[i].ActorID == id)
                 {
                     _aoes.RemoveAt(i);
                     break;
