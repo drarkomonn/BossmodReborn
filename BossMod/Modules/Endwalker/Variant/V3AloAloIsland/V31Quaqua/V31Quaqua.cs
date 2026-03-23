@@ -52,5 +52,5 @@ sealed class QuaquaStates : StateMachineBuilder
     SortOrder = 1,
     PlanLevel = 0)]
 [SkipLocalsInit]
-public sealed class Quaqua(WorldState ws, Actor primary) : BossModule(ws, primary, new(100f, 100f), new ArenaBoundsCircle(20f));
+public sealed class Quaqua(WorldState ws, Actor primary) : BossModule(ws, primary, new(-538f, 94f), new ArenaBoundsCircle(20f));
 
