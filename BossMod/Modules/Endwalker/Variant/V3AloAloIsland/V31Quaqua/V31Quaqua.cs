@@ -12,11 +12,11 @@ public enum OID : uint
 public enum AID : uint
 {
     MadeMagic = 35732, // 40BA->self, 5.0s cast, range 50 circle
-    _Weaponskill_ArcaneArmaments = 35720, // 40BA->self, 8.0s cast, single-target
+    ArcaneArmaments = 35720, // 40BA->self, 8.0s cast, single-target
     _Weaponskill_ = 35721, // 233C->self, no cast, single-target
     RavagingAxe = 35722, // 40BB->self, 2.0s cast, range 14 circle
-    _Weaponskill_RingingQuoits = 35723, // 40BB->self, 2.0s cast, range 5-18 donut
-    _Weaponskill_ArcaneArmaments1 = 35724, // 40BA->self, 5.0s cast, single-target
+    RingingQuoits = 35723, // 40BB->self, 2.0s cast, range 5-18 donut
+    ArcaneArmaments1 = 35724, // 40BA->self, 5.0s cast, single-target
     _Weaponskill_HammerLanding = 35725, // 40BA->location, 8.0s cast, range 40 circle
     _Weaponskill_HammerLanding1 = 35726, // 40BA->location, no cast, range 40 circle
     _Weaponskill_VioletStorm = 35733, // 40BA->self, 5.5s cast, range 32 120.000-degree cone
@@ -31,7 +31,7 @@ sealed class QuaquaStates : StateMachineBuilder
     public QuaquaStates(BossModule module) : base(module)
     {
         TrivialPhase()
-            .ActivateOnEnter<RavagingAxe>();
+            .ActivateOnEnter<ArcaneArmaments>();
 
     }
 }
@@ -56,4 +56,52 @@ sealed class QuaquaStates : StateMachineBuilder
 [SkipLocalsInit]
 public sealed class Quaqua(WorldState ws, Actor primary) : BossModule(ws, primary, new(-538f, 94f), new ArenaBoundsCircle(20f));
 
-sealed class RavagingAxe(BossModule module) : Components.SimpleAOEs(module, (uint)AID.RavagingAxe, new AOEShapeCircle(14f));
+sealed class ArcaneArmaments(BossModule module) : Components.GenericAOEs(module)
+{
+    private readonly List<AOEInstance> _aoes = [];
+    public override ReadOnlySpan<AOEInstance> ActiveAOEs(int slot, Actor actor)
+    {
+        var aoes = CollectionsMarshal.AsSpan(_aoes);
+        var len = aoes.Length;
+
+        if (len == 0)
+            return [];
+
+        List<AOEInstance> upcoming = [];
+        var firstAct = aoes[0].Activation;
+
+        for (var i = 0; i < len; i++)
+        {
+            if (aoes[i].Activation == firstAct)
+            {
+                upcoming.Add(aoes[i]);
+            }
+        }
+
+        return CollectionsMarshal.AsSpan(upcoming);
+    }
+    public override void OnActorEAnim(Actor actor, uint state)
+    {
+        if (actor.OID == (uint)OID.AethericCharge)
+        {
+            if (actor.CastInfo.Action.ID == (uint)AID.RavagingAxe)
+            {
+                _aoes.Add(new(new AOEShapeCircle(14f), actor.Position, activation: WorldState.CurrentTime.AddSeconds(7.7d)));
+            }
+            if (actor.CastInfo.Action.ID == (uint)AID.RingingQuoits)
+            {
+                _aoes.Add(new(new AOEShapeDonut(5f, 18f), actor.Position, activation: WorldState.CurrentTime.AddSeconds(7.7d)));
+            }
+        }
+    }
+    public override void OnEventCast(Actor caster, ActorCastEvent spell)
+    {
+        if (spell.Action.ID is (uint)AID.SphereShatter or (uint)AID.SphereShatterDonut)
+        {
+            if (_aoes.Count > 0)
+            {
+                _aoes.RemoveAt(0);
+            }
+        }
+    }
+}
