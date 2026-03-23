@@ -30,7 +30,8 @@ sealed class QuaquaStates : StateMachineBuilder
 {
     public QuaquaStates(BossModule module) : base(module)
     {
-        TrivialPhase();
+        TrivialPhase()
+            .ActivateOnEnter<RavagingAxe>();
 
     }
 }
