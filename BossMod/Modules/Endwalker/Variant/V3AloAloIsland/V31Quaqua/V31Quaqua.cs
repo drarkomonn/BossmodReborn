@@ -14,7 +14,7 @@ public enum AID : uint
     MadeMagic = 35732, // 40BA->self, 5.0s cast, range 50 circle
     _Weaponskill_ArcaneArmaments = 35720, // 40BA->self, 8.0s cast, single-target
     _Weaponskill_ = 35721, // 233C->self, no cast, single-target
-    _Weaponskill_RavagingAxe = 35722, // 40BB->self, 2.0s cast, range 14 circle
+    RavagingAxe = 35722, // 40BB->self, 2.0s cast, range 14 circle
     _Weaponskill_RingingQuoits = 35723, // 40BB->self, 2.0s cast, range 5-18 donut
     _Weaponskill_ArcaneArmaments1 = 35724, // 40BA->self, 5.0s cast, single-target
     _Weaponskill_HammerLanding = 35725, // 40BA->location, 8.0s cast, range 40 circle
@@ -30,8 +30,8 @@ sealed class QuaquaStates : StateMachineBuilder
 {
     public QuaquaStates(BossModule module) : base(module)
     {
-        TrivialPhase()
-            .ActivateOnEnter<MadeMagic>();
+        TrivialPhase();
+
     }
 }
 
@@ -55,5 +55,4 @@ sealed class QuaquaStates : StateMachineBuilder
 [SkipLocalsInit]
 public sealed class Quaqua(WorldState ws, Actor primary) : BossModule(ws, primary, new(-538f, 94f), new ArenaBoundsCircle(20f));
 
-sealed class MadeMagic(BossModule module)
-    : Components.PersistentInvertibleVoidzoneByCast(module, 50f, (module) => module.Enemies((uint)OID.Quaqua), (uint)AID.MadeMagic);
+sealed class RavagingAxe(BossModule module) : Components.SimpleAOEs(module, (uint)AID.RavagingAxe, new AOEShapeCircle(14f));
