@@ -86,11 +86,28 @@ sealed class ArcaneArmaments(BossModule module) : Components.GenericAOEs(module)
         {
             if (spell.Action.ID == (uint)AID.RavagingAxe)
             {
-                _aoes.Add(new(new AOEShapeCircle(14f), actor.Position, activation: WorldState.CurrentTime.AddSeconds(7.7d)));
+                _aoes.Add(new(new AOEShapeCircle(14f), caster.Position, activation: WorldState.CurrentTime.AddSeconds(7.7d)));
             }
             if (actor.CastInfo.Action.ID == (uint)AID.RingingQuoits)
             {
-                _aoes.Add(new(new AOEShapeDonut(5f, 18f), actor.Position, activation: WorldState.CurrentTime.AddSeconds(7.7d)));
+                _aoes.Add(new(new AOEShapeDonut(5f, 18f), caster.Position, activation: WorldState.CurrentTime.AddSeconds(7.7d)));
+            }
+        }
+    }
+
+    public override void OnCastFinished(Actor caster, ActorCastInfo spell)
+    {
+        if (spell.Action.ID == WatchedAction)
+        {
+            var count = _aoes.Count;
+            var id = caster.InstanceID;
+            for (var i = 0; i < count; ++i)
+            {
+                if (_aoes[i].caster.InstanceID == id)
+                {
+                    _aoes.RemoveAt(i);
+                    break;
+                }
             }
         }
     }
