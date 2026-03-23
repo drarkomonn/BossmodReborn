@@ -80,11 +80,11 @@ sealed class ArcaneArmaments(BossModule module) : Components.GenericAOEs(module)
 
         return CollectionsMarshal.AsSpan(upcoming);
     }
-    public override void OnActorEAnim(Actor actor, uint state)
+    public override void OnCastStarted(Actor caster, ActorCastInfo spell)
     {
-        if (actor.OID == (uint)OID.AethericCharge)
+        if (caster.OID == (uint)OID.AethericCharge)
         {
-            if (actor.CastInfo.Action.ID == (uint)AID.RavagingAxe)
+            if (spell.Action.ID == (uint)AID.RavagingAxe)
             {
                 _aoes.Add(new(new AOEShapeCircle(14f), actor.Position, activation: WorldState.CurrentTime.AddSeconds(7.7d)));
             }
