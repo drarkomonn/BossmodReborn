@@ -56,4 +56,4 @@ sealed class QuaquaStates : StateMachineBuilder
 public sealed class Quaqua(WorldState ws, Actor primary) : BossModule(ws, primary, new(-538f, 94f), new ArenaBoundsCircle(20f));
 
 sealed class MadeMagic(BossModule module)
-    : Components.PersistentInvertibleVoidzoneByCast(module, 50f, () => module.Enemies((uint)OID.Quaqua), (uint)AID.MadeMagic);
+    : Components.PersistentInvertibleVoidzoneByCast(module, 50f, (module) => module.Enemies((uint)OID.Quaqua), (uint)AID.MadeMagic);
