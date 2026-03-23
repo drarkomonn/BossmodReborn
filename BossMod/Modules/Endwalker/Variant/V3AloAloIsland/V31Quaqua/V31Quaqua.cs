@@ -94,14 +94,4 @@ sealed class ArcaneArmaments(BossModule module) : Components.GenericAOEs(module)
             }
         }
     }
-    public override void OnEventCast(Actor caster, ActorCastEvent spell)
-    {
-        if (spell.Action.ID is (uint)AID.SphereShatter or (uint)AID.SphereShatterDonut)
-        {
-            if (_aoes.Count > 0)
-            {
-                _aoes.RemoveAt(0);
-            }
-        }
-    }
 }
